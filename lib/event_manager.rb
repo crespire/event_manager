@@ -31,6 +31,19 @@ def save_thank_you_letter(id,form_letter)
   end
 end
 
+def clean_phone(number)
+  number.gsub!(/[[:punct:]]/, '')
+  return '(000) 000-0000' unless number.length.between?(10, 11)
+
+  if number.length == 11 && number[0] == '1'
+    '(%d%d%d) %d%d%d-%d%d%d%d' % number[1..-1].chars
+  elsif number.length == 10
+    "(%d%d%d) %d%d%d-%d%d%d%d" % number.chars
+  else
+    '(000) 000-0000'
+  end
+end
+
 puts 'EventManager initialized.'
 
 contents = CSV.open(
@@ -45,10 +58,12 @@ erb_template = ERB.new template_letter
 contents.each do |row|
   id = row[0]
   name = row[:first_name]
+  phone = clean_phone(row[:homephone])
   zipcode = clean_zipcode(row[:zipcode])
   legislators = legislators_by_zipcode(zipcode)
 
   form_letter = erb_template.result(binding)
 
-  save_thank_you_letter(id,form_letter)
+  #save_thank_you_letter(id, form_letter)
+  puts "#{name}'s number is #{phone}"
 end
