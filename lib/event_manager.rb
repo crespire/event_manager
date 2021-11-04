@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require 'csv'
 require 'google/apis/civicinfo_v2'
 require 'erb'
 
 def clean_zipcode(zipcode)
-  zipcode.to_s.rjust(5,"0")[0..4]
+  zipcode.to_s.rjust(5, '0')[0..4]
 end
 
 def legislators_by_zipcode(zip)
@@ -21,7 +23,7 @@ def legislators_by_zipcode(zip)
   end
 end
 
-def save_thank_you_letter(id,form_letter)
+def save_thank_you_letter(id, form_letter)
   Dir.mkdir('output') unless Dir.exist?('output')
 
   filename = "output/thanks_#{id}.html"
@@ -38,7 +40,7 @@ def clean_phone(number)
   if number.length == 11 && number[0] == '1'
     '(%d%d%d) %d%d%d-%d%d%d%d' % number[1..-1].chars
   elsif number.length == 10
-    "(%d%d%d) %d%d%d-%d%d%d%d" % number.chars
+    '(%d%d%d) %d%d%d-%d%d%d%d' % number.chars
   else
     '(000) 000-0000'
   end
@@ -64,6 +66,7 @@ contents.each do |row|
 
   form_letter = erb_template.result(binding)
 
-  #save_thank_you_letter(id, form_letter)
+  save_thank_you_letter(id, form_letter)
+
   puts "#{name}'s number is #{phone}"
 end
