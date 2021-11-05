@@ -57,11 +57,14 @@ contents = CSV.open(
 template_letter = File.read('form_letter.erb')
 erb_template = ERB.new template_letter
 
+reg_collect = []
+
 contents.each do |row|
   id = row[0]
   name = row[:first_name]
   phone = clean_phone(row[:homephone])
   zipcode = clean_zipcode(row[:zipcode])
+  reg_collect.push(row[:regdate])
   legislators = legislators_by_zipcode(zipcode)
 
   form_letter = erb_template.result(binding)
@@ -70,3 +73,8 @@ contents.each do |row|
 
   puts "#{name}'s number is #{phone}"
 end
+
+# Find the most active hour
+# Collect all the date/times
+# Convert each date/time to just the hour of registration
+# use Enumerable.tally -> output hash and run hash.values.max to get the answer.
