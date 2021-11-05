@@ -3,6 +3,7 @@
 require 'csv'
 require 'google/apis/civicinfo_v2'
 require 'erb'
+require 'date'
 
 def clean_zipcode(zipcode)
   zipcode.to_s.rjust(5, '0')[0..4]
@@ -64,17 +65,16 @@ contents.each do |row|
   name = row[:first_name]
   phone = clean_phone(row[:homephone])
   zipcode = clean_zipcode(row[:zipcode])
-  reg_collect.push(DateTime::parse(row[:regdate]))
+  reg_collect.push(DateTime.strptime(row[:regdate], '%m/%d/%y %k:%M'))
   legislators = legislators_by_zipcode(zipcode)
 
   form_letter = erb_template.result(binding)
 
   save_thank_you_letter(id, form_letter)
-
   puts "#{name}'s number is #{phone}"
 end
 
 # Find the most active hour
-# Collect all the date/times
-# Convert each date/time to just the hour of registration
+# Collect all the date/times as date objects
+# Convert each date/time to just the hour of registration - perhaps run map and get new array with each time.hour
 # use Enumerable.tally -> output hash and run hash.values.max to get the answer.
