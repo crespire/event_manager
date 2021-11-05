@@ -29,6 +29,8 @@ def save_thank_you_letter(id, form_letter)
 
   filename = "output/thanks_#{id}.html"
 
+  return if File.exist?(filename)
+
   File.open(filename, 'w') do |file|
     file.puts form_letter
   end
@@ -50,7 +52,7 @@ end
 puts 'EventManager initialized.'
 
 contents = CSV.open(
-  'event_attendees.csv',
+  'event_attendees_full.csv',
   headers: true,
   header_converters: :symbol
 )
@@ -71,13 +73,13 @@ contents.each do |row|
   form_letter = erb_template.result(binding)
 
   save_thank_you_letter(id, form_letter)
-  puts "#{name}'s number is #{phone}"
+  puts "#{id}: #{name}'s number is #{phone}"
 end
 
 hours = reg_collect.map(&:hour)
-hour, freq = hours.tally.max_by { |k, v| v }
+hour, freq = hours.tally.max_by { |_, v| v }
 puts "Most active hour is #{hour} with #{freq} occurences."
 
 days = reg_collect.map { |date| date.strftime('%A') }
-day, d_freq = days.tally.max_by { |k, v| v }
+day, d_freq = days.tally.max_by { |_, v| v }
 puts "The most active day is #{day} with #{d_freq} occurences."
