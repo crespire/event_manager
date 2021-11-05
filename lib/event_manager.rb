@@ -78,3 +78,11 @@ end
 # Collect all the date/times as date objects
 # Convert each date/time to just the hour of registration - perhaps run map and get new array with each time.hour
 # use Enumerable.tally -> output hash and run hash.values.max to get the answer.
+
+hours = reg_collect.map(&:hour)
+hour, freq = hours.tally.max_by { |k, v| v }
+puts "Most active hour is #{hour} with #{freq} occurences."
+
+days = reg_collect.map { |date| date.strftime('%A') }
+day, d_freq = days.tally.max_by { |k, v| v }
+puts "The most active day is #{day} with #{d_freq} occurences."
